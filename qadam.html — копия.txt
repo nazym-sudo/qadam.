@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QADAM — Образовательная платформа | Learning Platform</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Configuration for QADAM Theme Colors -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#EAF5EE',
+              100: '#D5EBDC',
+              500: '#2F7D50',
+              600: '#256641',
+              700: '#1C4D31',
+              beige: '#F7F2E8',
+              beigedark: '#EFE7DA',
+              dark: '#202522',
+              muted: '#68716B',
+              yellow: '#F4C84B',
+              yellowhover: '#E5B93C'
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Styles & Accessibility Dynamic Font Scaling -->
+  <style>
+    html.text-sm-mode { font-size: 14px; }
+    html.text-md-mode { font-size: 16px; }
+    html.text-lg-mode { font-size: 19px; }
+
+    .soft-shadow {
+      box-shadow: 0 10px 30px -5px rgba(32, 37, 34, 0.05), 0 4px 12px -2px rgba(32, 37, 34, 0.03);
+    }
+    .soft-shadow-lg {
+      box-shadow: 0 20px 40px -10px rgba(47, 125, 80, 0.1), 0 8px 20px -4px rgba(32, 37, 34, 0.06);
+    }
+
+    /* Custom smooth scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F7F2E8;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2F7D50;
+      border-radius: 9999px;
+    }
+    
+    .high-contrast {
+      filter: contrast(125%);
+    }
+
+    .pulse-subtle {
+      animation: pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulseSubtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body class="bg-brand-beige text-brand-dark min-h-full font-sans antialiased transition-colors duration-200 selection:bg-brand-500 selection:text-white">
+
+  <div id="app" class="min-h-screen flex flex-col">
+
+    <!-- TOP STICKY NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-brand-500/10 px-4 lg:px-8 py-3 transition-all duration-300">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        
+        <!-- Logo -->
+        <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('dashboard')">
+          <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+            Q
+          </div>
+          <div>
+            <span class="font-extrabold text-2xl tracking-tight text-brand-dark block leading-none">QADAM</span>
+            <span class="text-[10px] text-brand-muted tracking-wider uppercase font-medium" id="txt-tagline">Learn. Create. Connect.</span>
+          </div>
+        </div>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center gap-1 bg-brand-50/60 p-1.5 rounded-full border border-brand-500/10">
+          <button onclick="navigateTo('courses')" class="nav-btn px-4 py-1.5 rounded-full text-sm font-medium transition text-brand-muted hover:text-brand-dark hover:bg-white/60" data-nav="courses">
+            <span id="nav-courses">Курсы</span>
+          </button>
+          <button onclick="navigateTo('ai-mentor')" class="nav-btn px-4 py-1.5 rounded-full text-sm font-medium transition text-brand-muted hover:text-brand-dark hover:bg-white/60 flex items-center gap-1.5" data-nav="ai-mentor">
+            <i data-lucide="sparkles" class="w-4 h-4 text-brand-500"></i>
+            <span id="nav-ai">AI Наставник</span>
+          </button>
+          <button onclick="navigateTo('community')" class="nav-btn px-4 py-1.5 rounded-full text-sm font-medium transition text-brand-muted hover:text-brand-dark hover:bg-white/60" data-nav="community">
+            <span id="nav-community">Сообщество</span>
+          </button>
+          <button onclick="navigateTo('marketplace')" class="nav-btn px-4 py-1.5 rounded-full text-sm font-medium transition text-brand-muted hover:text-brand-dark hover:bg-white/60 flex items-center gap-1" data-nav="marketplace">
+            <span id="nav-marketplace">Маркетплейс</span>
+            <i data-lucide="lock" id="marketplace-lock-icon" class="w-3.5 h-3.5 text-brand-muted"></i>
+          </button>
+          <button onclick="navigateTo('passport')" class="nav-btn px-4 py-1.5 rounded-full text-sm font-medium transition text-brand-muted hover:text-brand-dark hover:bg-white/60" data-nav="passport">
+            <span id="nav-passport">Паспорт навыков</span>
+          </button>
+        </nav>
+
+        <!-- Right Controls & User Info -->
+        <div class="flex items-center gap-2 sm:gap-4">
+          
+          <!-- Dynamic Text Size Switcher -->
+          <div class="flex items-center bg-brand-50 rounded-lg p-1 border border-brand-500/10">
+            <button onclick="setTextSize('sm')" title="Small Text" class="px-2 py-1 text-xs font-bold rounded hover:bg-white transition" id="ts-sm">A-</button>
+            <button onclick="setTextSize('md')" title="Medium Text" class="px-2 py-1 text-xs font-bold rounded bg-white shadow-sm text-brand-500 transition" id="ts-md">A</button>
+            <button onclick="setTextSize('lg')" title="Large Text" class="px-2 py-1 text-xs font-bold rounded hover:bg-white transition" id="ts-lg">A+</button>
+          </div>
+
+          <!-- Language Switcher -->
+          <div class="flex items-center bg-brand-50 rounded-lg p-1 border border-brand-500/10 font-medium text-xs">
+            <button onclick="setLanguage('ru')" class="px-2.5 py-1 rounded transition" id="lang-ru">RU</button>
+            <button onclick="setLanguage('kz')" class="px-2.5 py-1 rounded transition text-brand-muted" id="lang-kz">KZ</button>
+          </div>
+
+          <!-- Notifications Bell Popover Trigger -->
+          <div class="relative">
+            <button onclick="toggleNotifications()" class="relative p-2 rounded-full hover:bg-brand-50 text-brand-dark transition">
+              <i data-lucide="bell" class="w-5 h-5"></i>
+              <span id="notif-badge" class="absolute top-1 right-1 w-2.5 h-2.5 bg-brand-yellow rounded-full ring-2 ring-white"></span>
+            </button>
+
+            <!-- Notifications Dropdown -->
+            <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-brand-500/10 p-4 z-50">
+              <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-3">
+                <h4 class="font-bold text-sm" id="lbl-notifs">Уведомления</h4>
+                <button onclick="clearNotifications()" class="text-xs text-brand-500 font-medium hover:underline" id="lbl-clear-notifs">Очистить</button>
+              </div>
+              <div class="space-y-3 max-h-64 overflow-y-auto" id="notif-list">
+                <!-- Notifications populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- User Trigger / Login Button -->
+          <div id="user-header-action">
+            <button onclick="openOnboardingModal()" class="bg-brand-500 hover:bg-brand-600 text-white font-medium text-sm px-4 py-2 rounded-full shadow-md transition flex items-center gap-1.5">
+              <span id="lbl-start-free">Начать бесплатно</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl bg-brand-50 text-brand-dark">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Navigation -->
+      <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 mt-3 pt-3 space-y-2 pb-2">
+        <button onclick="navigateTo('courses'); toggleMobileMenu()" class="w-full text-left px-4 py-2 font-medium text-sm text-brand-dark hover:bg-brand-50 rounded-xl">Курсы</button>
+        <button onclick="navigateTo('ai-mentor'); toggleMobileMenu()" class="w-full text-left px-4 py-2 font-medium text-sm text-brand-dark hover:bg-brand-50 rounded-xl flex items-center justify-between">
+          <span>AI Наставник</span>
+          <i data-lucide="sparkles" class="w-4 h-4 text-brand-500"></i>
+        </button>
+        <button onclick="navigateTo('community'); toggleMobileMenu()" class="w-full text-left px-4 py-2 font-medium text-sm text-brand-dark hover:bg-brand-50 rounded-xl">Сообщество</button>
+        <button onclick="navigateTo('marketplace'); toggleMobileMenu()" class="w-full text-left px-4 py-2 font-medium text-sm text-brand-dark hover:bg-brand-50 rounded-xl">Маркетплейс</button>
+        <button onclick="navigateTo('passport'); toggleMobileMenu()" class="w-full text-left px-4 py-2 font-medium text-sm text-brand-dark hover:bg-brand-50 rounded-xl">Паспорт навыков</button>
+        <button onclick="navigateTo('share-experience'); toggleMobileMenu()" class="w-full text-left px-4 py-2 font-medium text-sm text-brand-dark hover:bg-brand-50 rounded-xl">Поделиться опытом</button>
+        <button onclick="navigateTo('projects'); toggleMobileMenu()" class="w-full text-left px-4 py-2 font-medium text-sm text-brand-dark hover:bg-brand-50 rounded-xl">Мои проекты</button>
+      </div>
+    </header>
+
+    <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col md:flex-row gap-6 p-4 sm:p-6 lg:p-8">
+      
+      <!-- PERSISTENT SIDEBAR (Desktop) -->
+      <aside class="hidden md:flex flex-col w-64 shrink-0 gap-2">
+        <div class="bg-white rounded-3xl p-4 soft-shadow border border-brand-500/10 space-y-1">
+          <div class="px-3 py-2 text-xs font-bold text-brand-muted uppercase tracking-wider" id="lbl-menu">Меню</div>
+          
+          <button onclick="navigateTo('dashboard')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-dark hover:bg-brand-50" data-page="dashboard">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 text-brand-500"></i>
+            <span id="sb-home">Главная</span>
+          </button>
+          
+          <button onclick="navigateTo('courses')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50" data-page="courses">
+            <i data-lucide="book-open" class="w-4 h-4 text-brand-500"></i>
+            <span id="sb-courses">Мои курсы & Каталог</span>
+          </button>
+
+          <button onclick="navigateTo('ai-mentor')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50" data-page="ai-mentor">
+            <i data-lucide="bot" class="w-4 h-4 text-brand-500"></i>
+            <span id="sb-ai">AI Наставник</span>
+          </button>
+
+          <button onclick="navigateTo('passport')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50" data-page="passport">
+            <i data-lucide="award" class="w-4 h-4 text-brand-500"></i>
+            <span id="sb-passport">Цифровой паспорт</span>
+          </button>
+
+          <button onclick="navigateTo('projects')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50" data-page="projects">
+            <i data-lucide="folder-kanban" class="w-4 h-4 text-brand-500"></i>
+            <span id="sb-projects">Мои проекты</span>
+          </button>
+
+          <button onclick="navigateTo('community')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50" data-page="community">
+            <i data-lucide="users" class="w-4 h-4 text-brand-500"></i>
+            <span id="sb-community">Сообщество и Клубы</span>
+          </button>
+
+          <button onclick="navigateTo('share-experience')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50" data-page="share-experience">
+            <i data-lucide="sparkle" class="w-4 h-4 text-brand-yellow"></i>
+            <span id="sb-share">Поделиться опытом</span>
+          </button>
+
+          <button onclick="navigateTo('marketplace')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50 justify-between" data-page="marketplace">
+            <div class="flex items-center gap-3">
+              <i data-lucide="shopping-bag" class="w-4 h-4 text-brand-500"></i>
+              <span id="sb-marketplace">Маркетплейс</span>
+            </div>
+            <i data-lucide="lock" class="w-3.5 h-3.5 text-brand-muted" id="sb-lock-mp"></i>
+          </button>
+
+          <div class="pt-3 border-t border-gray-100 my-2"></div>
+
+          <button onclick="navigateTo('settings')" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl text-sm font-medium transition text-brand-muted hover:bg-brand-50" data-page="settings">
+            <i data-lucide="settings" class="w-4 h-4 text-brand-muted"></i>
+            <span id="sb-settings">Настройки</span>
+          </button>
+        </div>
+
+        <!-- Dynamic User Quick Info Card -->
+        <div class="bg-brand-50 rounded-3xl p-4 border border-brand-500/10 space-y-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center text-lg shadow" id="user-avatar-initial">
+              А
+            </div>
+            <div class="overflow-hidden">
+              <h4 class="font-bold text-sm text-brand-dark truncate" id="user-display-name">Айгуль Апа</h4>
+              <p class="text-xs text-brand-muted truncate" id="user-display-level">QADAM Путь: Шаг 2</p>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs font-semibold">
+              <span class="text-brand-muted" id="lbl-path-progress">Прогресс пути</span>
+              <span class="text-brand-500" id="user-overall-progress-text">35%</span>
+            </div>
+            <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-brand-500 rounded-full transition-all duration-500" id="user-overall-progress-bar" style="width: 35%"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="flex-1 min-w-0">
+        
+        <!-- PAGE 1: HERO / LANDING / DASHBOARD OVERVIEW -->
+        <section id="view-dashboard" class="view-section space-y-6">
+          
+          <!-- Hero Section (Visible if user hasn't registered or wants to start) -->
+          <div class="bg-gradient-to-br from-white via-brand-50 to-brand-beige/50 rounded-3xl p-6 sm:p-10 soft-shadow border border-brand-500/10 relative overflow-hidden">
+            <div class="max-w-2xl space-y-4 relative z-10">
+              <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-500/10 text-brand-500 rounded-full text-xs font-semibold">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span id="hero-badge">Персонализированная EdTech Платформа</span>
+              </div>
+              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-brand-dark tracking-tight leading-tight" id="hero-title">
+                Учитесь. Создавайте. Общайтесь.
+              </h1>
+              <p class="text-base sm:text-lg text-brand-muted font-normal leading-relaxed" id="hero-subtitle">
+                QADAM — это образовательное пространство, где современные технологии превращаются в простые и уверенные ежедневные навыки.
+              </p>
+              <div class="flex flex-wrap items-center gap-4 pt-2">
+                <button onclick="openOnboardingModal()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg hover:shadow-xl transition flex items-center gap-2">
+                  <span id="hero-btn-start">Начать 14 дней бесплатно</span>
+                  <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+                <button onclick="navigateTo('courses')" class="bg-white hover:bg-brand-50 text-brand-dark border border-brand-500/20 font-semibold px-6 py-3.5 rounded-2xl transition">
+                  <span id="hero-btn-explore">Исследовать курсы</span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Dashboard Preview Widget -->
+            <div class="mt-8 pt-8 border-t border-brand-500/10 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white p-4 rounded-2xl border border-brand-500/10 soft-shadow">
+                <div class="text-xs font-semibold text-brand-muted uppercase" id="card-active-title">Текущий курс</div>
+                <div class="text-base font-bold text-brand-dark mt-1" id="active-course-name">Основы смартфона</div>
+                <div class="mt-3 flex items-center justify-between text-xs font-medium text-brand-muted">
+                  <span id="active-course-progress-txt">64% пройдено</span>
+                  <span>8 из 12 уроков</span>
+                </div>
+                <div class="w-full h-1.5 bg-brand-50 rounded-full mt-1.5 overflow-hidden">
+                  <div class="bg-brand-500 h-full rounded-full" style="width: 64%"></div>
+                </div>
+                <button onclick="openCourseViewer('course-1')" class="w-full mt-3 bg-brand-50 hover:bg-brand-100 text-brand-500 font-bold text-xs py-2 rounded-xl transition flex items-center justify-center gap-1">
+                  <span id="btn-continue-lesson">Продолжить урок</span>
+                  <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i>
+                </button>
+              </div>
+
+              <div class="bg-white p-4 rounded-2xl border border-brand-500/10 soft-shadow flex flex-col justify-between">
+                <div>
+                  <div class="text-xs font-semibold text-brand-muted uppercase" id="card-ai-assistant">AI Наставник</div>
+                  <div class="text-sm font-semibold text-brand-dark mt-1" id="card-ai-desc">Персональная пошаговая помощь по любому вопросу</div>
+                </div>
+                <button onclick="navigateTo('ai-mentor')" class="mt-4 bg-brand-yellow hover:bg-brand-yellowhover text-brand-dark font-bold text-xs py-2 rounded-xl transition flex items-center justify-center gap-1.5">
+                  <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+                  <span id="btn-ask-ai">Спросить AI</span>
+                </button>
+              </div>
+
+              <div class="bg-white p-4 rounded-2xl border border-brand-500/10 soft-shadow flex flex-col justify-between">
+                <div>
+                  <div class="text-xs font-semibold text-brand-muted uppercase" id="card-share-title">Обмен опытом</div>
+                  <div class="text-sm font-semibold text-brand-dark mt-1" id="card-share-desc">Превратите свои знания в авторский курс</div>
+                </div>
+                <button onclick="navigateTo('share-experience')" class="mt-4 bg-brand-50 text-brand-500 border border-brand-500/20 hover:bg-brand-100 font-bold text-xs py-2 rounded-xl transition flex items-center justify-center gap-1">
+                  <span id="btn-create-course">Создать курс</span>
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Statistics Grid -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-3xl soft-shadow border border-brand-500/10 flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-500 flex items-center justify-center shrink-0">
+                <i data-lucide="book-open" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-extrabold text-brand-dark" id="stat-courses-count">3</div>
+                <div class="text-xs text-brand-muted font-medium" id="lbl-stat-courses">Курсов начато</div>
+              </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-3xl soft-shadow border border-brand-500/10 flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-500 flex items-center justify-center shrink-0">
+                <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-extrabold text-brand-dark" id="stat-lessons-count">18</div>
+                <div class="text-xs text-brand-muted font-medium" id="lbl-stat-lessons">Уроков пройдено</div>
+              </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-3xl soft-shadow border border-brand-500/10 flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-500 flex items-center justify-center shrink-0">
+                <i data-lucide="trending-up" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-extrabold text-brand-dark" id="stat-progress-pct">42%</div>
+                <div class="text-xs text-brand-muted font-medium" id="lbl-stat-progress">Общий прогресс</div>
+              </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-3xl soft-shadow border border-brand-500/10 flex items-center gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-brand-yellow/20 text-brand-dark flex items-center justify-center shrink-0">
+                <i data-lucide="award" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-extrabold text-brand-dark" id="stat-badges-count">4</div>
+                <div class="text-xs text-brand-muted font-medium" id="lbl-stat-badges">Достижения</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personal Learning Path Widget -->
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-brand-500/10 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xl font-bold text-brand-dark" id="title-personal-path">Ваш персональный путь QADAM</h3>
+                <p class="text-sm text-brand-muted" id="sub-personal-path">Сформирован на основе ваших интересов и целей</p>
+              </div>
+              <button onclick="openOnboardingModal()" class="text-xs font-semibold text-brand-500 hover:underline" id="btn-reconfig-path">
+                Настроить заново
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-2" id="path-steps-container">
+              <!-- Steps rendered dynamically via Javascript -->
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGE 2: COURSES CATALOG & LESSON VIEWER -->
+        <section id="view-courses" class="view-section hidden space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold text-brand-dark" id="title-courses-catalog">Каталог курсов</h2>
+              <p class="text-sm text-brand-muted" id="sub-courses-catalog">Простые уроки с обязательной практикой</p>
+            </div>
+            
+            <!-- Course Search Bar -->
+            <div class="relative w-full sm:w-72">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-brand-muted"></i>
+              <input type="text" id="course-search-input" oninput="filterCourses()" placeholder="Поиск по курсам..." class="w-full bg-white pl-10 pr-4 py-2 rounded-2xl border border-brand-500/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+          </div>
+
+          <!-- Category Filter Chips -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="course-categories">
+            <button onclick="filterCategory('all')" class="cat-chip bg-brand-500 text-white px-4 py-2 rounded-full text-xs font-bold shrink-0 transition" data-cat="all">Все категории</button>
+            <button onclick="filterCategory('digital')" class="cat-chip bg-white text-brand-dark border border-brand-500/10 px-4 py-2 rounded-full text-xs font-bold shrink-0 hover:bg-brand-50 transition" data-cat="digital">Смартфон и Цифра</button>
+            <button onclick="filterCategory('ai')" class="cat-chip bg-white text-brand-dark border border-brand-500/10 px-4 py-2 rounded-full text-xs font-bold shrink-0 hover:bg-brand-50 transition" data-cat="ai">Искусственный Интеллект</button>
+            <button onclick="filterCategory('safety')" class="cat-chip bg-white text-brand-dark border border-brand-500/10 px-4 py-2 rounded-full text-xs font-bold shrink-0 hover:bg-brand-50 transition" data-cat="safety">Безопасность</button>
+            <button onclick="filterCategory('creativity')" class="cat-chip bg-white text-brand-dark border border-brand-500/10 px-4 py-2 rounded-full text-xs font-bold shrink-0 hover:bg-brand-50 transition" data-cat="creativity">Творчество и Фото</button>
+            <button onclick="filterCategory('communication')" class="cat-chip bg-white text-brand-dark border border-brand-500/10 px-4 py-2 rounded-full text-xs font-bold shrink-0 hover:bg-brand-50 transition" data-cat="communication">Общение</button>
+            <button onclick="filterCategory('life')" class="cat-chip bg-white text-brand-dark border border-brand-500/10 px-4 py-2 rounded-full text-xs font-bold shrink-0 hover:bg-brand-50 transition" data-cat="life">Быт и Услуги</button>
+          </div>
+
+          <!-- Courses Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="courses-grid">
+            <!-- Dynamically injected course cards -->
+          </div>
+        </section>
+
+        <!-- LESSON PLAYER MODAL / VIEW OVERLAY -->
+        <div id="lesson-player-modal" class="hidden fixed inset-0 z-50 bg-brand-dark/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto soft-shadow-lg border border-brand-500/10 p-6 space-y-6 relative">
+            <button onclick="closeLessonPlayer()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-brand-50 text-brand-muted">
+              <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <!-- Lesson Header -->
+            <div class="space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-50 text-brand-500 rounded-full text-xs font-bold">
+                <span id="lp-course-title">Основы смартфона</span>
+                <span>•</span>
+                <span id="lp-lesson-number">Урок 4 из 12</span>
+              </div>
+              <h2 class="text-2xl font-bold text-brand-dark" id="lp-title">Отправка фото и файлов в мессенджере</h2>
+            </div>
+
+            <!-- Content Area (Text or Video Summary) -->
+            <div class="bg-brand-beige/60 p-5 rounded-2xl border border-brand-500/10 space-y-3" id="lp-content">
+              <h4 class="font-bold text-sm text-brand-dark" id="lbl-lesson-theory">Теория и пояснение:</h4>
+              <p class="text-sm text-brand-muted leading-relaxed" id="lp-theory-text">
+                Обмен фотографиями с близкими — это простой способ делиться радостными моментами. В мессенджере для этого используется иконка скрепки или плюсика.
+              </p>
+            </div>
+
+            <!-- MANDATORY PRACTICE STEP-BY-STEP WORKFLOW -->
+            <div class="bg-white p-5 rounded-2xl border-2 border-brand-500/20 soft-shadow space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-brand-yellow flex items-center justify-center text-brand-dark font-bold text-sm">
+                    ⚡
+                  </div>
+                  <h3 class="font-bold text-brand-dark text-base" id="lbl-practice-task">Обязательное практическое задание</h3>
+                </div>
+                <span class="text-xs bg-brand-50 text-brand-500 font-bold px-2.5 py-1 rounded-full" id="lp-step-counter">Шаг 1 из 4</span>
+              </div>
+
+              <!-- Interactive Practice Checklist -->
+              <div class="space-y-3" id="lp-practice-steps">
+                <!-- Injected step-by-step interactive check items -->
+              </div>
+
+              <div class="pt-2 flex items-center justify-between">
+                <button onclick="askAIMentorForCurrentLesson()" class="text-xs font-bold text-brand-500 hover:underline flex items-center gap-1">
+                  <i data-lucide="sparkles" class="w-4 h-4"></i>
+                  <span id="btn-lp-ask-ai">Нужна помощь AI Наставника?</span>
+                </button>
+                <button onclick="completeCurrentLessonPractice()" id="btn-complete-practice" class="bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+                  <span id="lbl-btn-complete">Я выполнил практику</span>
+                  <i data-lucide="check-circle" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE 3: AI MENTOR (ONE STEP AT A TIME CONVERSATIONAL GUIDE) -->
+        <section id="view-ai-mentor" class="view-section hidden space-y-6">
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-brand-500/10 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-500 flex items-center justify-center font-bold text-xl">
+                  <i data-lucide="bot" class="w-7 h-7"></i>
+                </div>
+                <div>
+                  <h2 class="text-xl font-bold text-brand-dark" id="title-ai-mentor">AI Наставник QADAM</h2>
+                  <p class="text-xs text-brand-muted" id="sub-ai-mentor">Пошаговая помощь без сложных слов и спешки</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button onclick="simulateVoiceMode()" class="bg-brand-50 hover:bg-brand-100 text-brand-500 font-bold text-xs px-3 py-2 rounded-xl border border-brand-500/10 transition flex items-center gap-1.5">
+                  <i data-lucide="mic" class="w-4 h-4"></i>
+                  <span id="btn-voice-mode">Голосовой режим</span>
+                </button>
+                <button onclick="resetAIChat()" class="p-2 text-brand-muted hover:bg-brand-50 rounded-xl transition" title="Очистить диалог">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Action Help Buttons -->
+            <div class="flex flex-wrap gap-2 pt-1">
+              <button onclick="handleAIQuickAction('simpler')" class="bg-brand-beige hover:bg-brand-beigedark text-brand-dark text-xs font-semibold px-3 py-1.5 rounded-full border border-brand-500/10 transition">
+                💡 Объясни проще
+              </button>
+              <button onclick="handleAIQuickAction('repeat')" class="bg-brand-beige hover:bg-brand-beigedark text-brand-dark text-xs font-semibold px-3 py-1.5 rounded-full border border-brand-500/10 transition">
+                🔁 Повтори шаг
+              </button>
+              <button onclick="handleAIQuickAction('example')" class="bg-brand-beige hover:bg-brand-beigedark text-brand-dark text-xs font-semibold px-3 py-1.5 rounded-full border border-brand-500/10 transition">
+                🖼 Покажи пример
+              </button>
+              <button onclick="sendAIMessage('Как мне отправить фотографию в WhatsApp?')" class="bg-brand-50 text-brand-500 text-xs font-semibold px-3 py-1.5 rounded-full border border-brand-500/10 transition">
+                📱 Как отправить фото?
+              </button>
+            </div>
+
+            <!-- Chat Message Feed -->
+            <div id="ai-chat-messages" class="h-96 overflow-y-auto space-y-4 p-4 bg-brand-beige/30 rounded-2xl border border-brand-500/10">
+              <!-- AI and User messages injected dynamically -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="flex items-center gap-2 pt-2">
+              <input type="text" id="ai-user-input" onkeydown="if(event.key==='Enter') triggerUserAISend()" placeholder="Задайте вопрос AI Наставнику..." class="flex-1 bg-white px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              <button onclick="triggerUserAISend()" class="bg-brand-500 hover:bg-brand-600 text-white p-3 rounded-2xl shadow transition">
+                <i data-lucide="send" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGE 4: DIGITAL PASSPORT & ACHIEVEMENTS -->
+        <section id="view-passport" class="view-section hidden space-y-6">
+          <!-- Digital Passport Header Card -->
+          <div class="bg-gradient-to-r from-brand-500 to-brand-700 text-white rounded-3xl p-6 sm:p-8 soft-shadow relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative z-10">
+              <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center font-bold text-2xl border border-white/20">
+                  <i data-lucide="award" class="w-10 h-10 text-brand-yellow"></i>
+                </div>
+                <div>
+                  <div class="text-xs uppercase tracking-widest text-brand-100 font-semibold" id="lbl-passport-tag">Цифровой Паспорт Навыков</div>
+                  <h2 class="text-2xl sm:text-3xl font-extrabold mt-0.5" id="passport-user-name">Айгуль Апа</h2>
+                  <p class="text-sm text-brand-50 mt-1" id="passport-user-sub">Подтвержденные практические цифровые компетенции</p>
+                </div>
+              </div>
+
+              <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 text-center shrink-0">
+                <div class="text-xs text-brand-100 font-medium" id="lbl-passport-status">Статус подтверждения</div>
+                <div class="text-lg font-bold text-brand-yellow mt-0.5" id="passport-level">Активный Практик</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Verified Skills Checkmarks -->
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-brand-500/10 space-y-4">
+            <h3 class="text-lg font-bold text-brand-dark" id="title-skills">Подтвержденные навыки (✓)</h3>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="verified-skills-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Achievements & Badges Grid -->
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-brand-500/10 space-y-4">
+            <h3 class="text-lg font-bold text-brand-dark" id="title-achievements">Знаки отличия и Достижения</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="badges-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGE 5: DIGITAL PROJECTS STUDIO -->
+        <section id="view-projects" class="view-section hidden space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold text-brand-dark" id="title-projects">Мои цифровые проекты</h2>
+              <p class="text-sm text-brand-muted" id="sub-projects">Создавайте открытки, фотоальбомы и личные истории</p>
+            </div>
+            <button onclick="createNewProject()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm px-4 py-2.5 rounded-2xl shadow transition flex items-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span id="btn-create-proj">Создать новый проект</span>
+            </button>
+          </div>
+
+          <!-- Existing Projects List -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="projects-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </section>
+
+        <!-- PAGE 6: SHARE EXPERIENCE (Convert Wisdom into Mini-Course) -->
+        <section id="view-share-experience" class="view-section hidden space-y-6">
+          <div class="bg-white rounded-3xl p-6 sm:p-8 soft-shadow border border-brand-500/10 space-y-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-yellow/20 text-brand-dark rounded-full text-xs font-bold mb-2">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                <span id="lbl-share-badge">ИИ-Генератор Авторских Курсов</span>
+              </div>
+              <h2 class="text-2xl font-extrabold text-brand-dark" id="title-share-exp">Поделитесь своим жизненным опытом</h2>
+              <p class="text-sm text-brand-muted mt-1" id="sub-share-exp">
+                Вы работали бухгалтером 30 лет или знаете все секреты садоводства? Расскажите нам, а AI превратит ваш опыт в пошаговый обучающий курс для сообщества!
+              </p>
+            </div>
+
+            <!-- Experience Input Form -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1" id="lbl-exp-topic">Тема вашего опыта или хобби</label>
+                <input type="text" id="exp-input-topic" placeholder="Например: 30 лет опыта в садоводстве и выращивании томатов" class="w-full bg-brand-beige/40 px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1" id="lbl-exp-aud">Для кого этот курс?</label>
+                  <input type="text" id="exp-input-aud" placeholder="Например: Для начинающих дачников" class="w-full bg-brand-beige/40 px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1" id="lbl-exp-years">Стаж / Опыт (лет)</label>
+                  <input type="text" id="exp-input-years" placeholder="Например: 25 лет" class="w-full bg-brand-beige/40 px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1" id="lbl-exp-desc">Подробное описание ваших секретов и советов</label>
+                <textarea id="exp-input-desc" rows="4" placeholder="Расскажите ключевые вещи, которым вы хотите научить других..." class="w-full bg-brand-beige/40 px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+              </div>
+
+              <button onclick="generateAICourseStructure()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow transition flex items-center justify-center gap-2 w-full sm:w-auto">
+                <i data-lucide="wand-2" class="w-5 h-5"></i>
+                <span id="btn-gen-course">Сгенерировать структуру курса с помощью AI</span>
+              </button>
+            </div>
+
+            <!-- Generated Mini-Course Output Area -->
+            <div id="generated-course-result" class="hidden pt-6 border-t border-gray-100 space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-brand-dark" id="lbl-generated-preview">Сгенерированная структура мини-курса:</h3>
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold flex items-center gap-1">
+                  <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                  <span id="mod-status">На модерации (Under Review)</span>
+                </span>
+              </div>
+
+              <div id="generated-lessons-list" class="space-y-3 bg-brand-50 p-5 rounded-2xl border border-brand-500/20">
+                <!-- AI-generated structure injected here -->
+              </div>
+
+              <button onclick="submitCourseForModeration()" class="bg-brand-yellow hover:bg-brand-yellowhover text-brand-dark font-bold text-sm px-6 py-3 rounded-2xl shadow transition">
+                <span id="btn-submit-mod">Отправить на публикацию в Маркетплейс</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGE 7: COMMUNITY CLUBS & DISCUSSIONS -->
+        <section id="view-community" class="view-section hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-extrabold text-brand-dark" id="title-community">Сообщество и Клубы по интересам</h2>
+            <p class="text-sm text-brand-muted" id="sub-community">Общайтесь, делитесь фотографиями и находите единомышленников</p>
+          </div>
+
+          <!-- Clubs Selector Chips -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="clubs-list">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Community Discussion Feed -->
+          <div class="bg-white rounded-3xl p-6 soft-shadow border border-brand-500/10 space-y-6">
+            <h3 class="text-lg font-bold text-brand-dark" id="lbl-club-discussions">Обсуждения в клубе</h3>
+
+            <!-- New Post Creator -->
+            <div class="bg-brand-beige/50 p-4 rounded-2xl border border-brand-500/10 space-y-3">
+              <textarea id="community-post-text" placeholder="Поделитесь чем-то с участниками клуба..." class="w-full bg-white p-3 rounded-xl border border-brand-500/10 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+              <div class="flex justify-between items-center">
+                <button class="text-brand-muted hover:text-brand-dark p-2 rounded-lg text-xs font-semibold flex items-center gap-1">
+                  <i data-lucide="image" class="w-4 h-4"></i>
+                  <span id="lbl-add-photo">Прикрепить фото</span>
+                </button>
+                <button onclick="publishCommunityPost()" class="bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition">
+                  <span id="btn-pub-post">Опубликовать</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Feed Posts -->
+            <div id="community-posts-feed" class="space-y-4">
+              <!-- Dynamically populated posts -->
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGE 8: MARKETPLACE (GATED) -->
+        <section id="view-marketplace" class="view-section hidden space-y-6">
+          <!-- Gated Lock Banner (if basic courses not completed) -->
+          <div id="mp-lock-screen" class="bg-white rounded-3xl p-8 text-center soft-shadow border border-brand-500/10 space-y-4">
+            <div class="w-16 h-16 rounded-full bg-brand-50 text-brand-500 mx-auto flex items-center justify-center text-2xl">
+              <i data-lucide="lock" class="w-8 h-8"></i>
+            </div>
+            <div class="max-w-md mx-auto space-y-2">
+              <h3 class="text-2xl font-bold text-brand-dark" id="title-mp-locked">Маркетплейс временно заблокирован</h3>
+              <p class="text-sm text-brand-muted" id="sub-mp-locked">
+                Для доступа к публикации и покупке авторских курсов от участников сообщества необходимо завершить базовый курс "Основы смартфона".
+              </p>
+            </div>
+            <button onclick="openCourseViewer('course-1')" class="bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm px-6 py-3 rounded-2xl shadow transition">
+              <span id="btn-mp-unlock-course">Пройти базовый курс</span>
+            </button>
+          </div>
+
+          <!-- Unlocked Marketplace Catalog -->
+          <div id="mp-content" class="hidden space-y-6">
+            <div>
+              <h2 class="text-2xl font-extrabold text-brand-dark" id="title-marketplace">Маркетплейс авторских знаний</h2>
+              <p class="text-sm text-brand-muted" id="sub-marketplace">Курсы и руководства, созданные участниками QADAM</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="marketplace-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </section>
+
+        <!-- PAGE 9: SETTINGS & ACCESSIBILITY CONTROLS -->
+        <section id="view-settings" class="view-section hidden space-y-6">
+          <div class="bg-white rounded-3xl p-6 sm:p-8 soft-shadow border border-brand-500/10 space-y-6">
+            <h2 class="text-2xl font-extrabold text-brand-dark border-b border-gray-100 pb-4" id="title-settings">Настройки и Доступность</h2>
+
+            <div class="space-y-6">
+              <!-- Text Size Control -->
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h4 class="font-bold text-base text-brand-dark" id="lbl-set-fontsize">Размер шрифта на сайте</h4>
+                  <p class="text-xs text-brand-muted" id="sub-set-fontsize">Выберите удобный размер текста для чтения</p>
+                </div>
+                <div class="flex items-center bg-brand-50 p-1.5 rounded-2xl border border-brand-500/10">
+                  <button onclick="setTextSize('sm')" class="px-4 py-2 text-sm font-bold rounded-xl transition" id="set-ts-sm">Маленький</button>
+                  <button onclick="setTextSize('md')" class="px-4 py-2 text-sm font-bold rounded-xl bg-white text-brand-500 shadow-sm transition" id="set-ts-md">Средний</button>
+                  <button onclick="setTextSize('lg')" class="px-4 py-2 text-sm font-bold rounded-xl transition" id="set-ts-lg">Крупный</button>
+                </div>
+              </div>
+
+              <!-- High Contrast Control -->
+              <div class="flex items-center justify-between border-t border-gray-100 pt-4">
+                <div>
+                  <h4 class="font-bold text-base text-brand-dark" id="lbl-set-contrast">Режим высокой контрастности</h4>
+                  <p class="text-xs text-brand-muted" id="sub-set-contrast">Увеличивает четкость текста и элементов</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggle-contrast" onchange="toggleHighContrast(this.checked)" class="sr-only peer">
+                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500"></div>
+                </label>
+              </div>
+
+              <!-- Language Preference -->
+              <div class="flex items-center justify-between border-t border-gray-100 pt-4">
+                <div>
+                  <h4 class="font-bold text-base text-brand-dark" id="lbl-set-lang">Язык интерфейса</h4>
+                  <p class="text-xs text-brand-muted" id="sub-set-lang">Русский или Қазақша</p>
+                </div>
+                <div class="flex items-center bg-brand-50 p-1 rounded-xl border border-brand-500/10 font-bold text-xs">
+                  <button onclick="setLanguage('ru')" class="px-4 py-2 rounded-lg transition" id="set-lang-ru">Русский</button>
+                  <button onclick="setLanguage('kz')" class="px-4 py-2 rounded-lg transition text-brand-muted" id="set-lang-kz">Қазақша</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- ONBOARDING MODAL -->
+    <div id="onboarding-modal" class="hidden fixed inset-0 z-50 bg-brand-dark/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <div class="bg-white rounded-3xl max-w-xl w-full soft-shadow-lg border border-brand-500/10 p-6 sm:p-8 space-y-6 relative">
+        <button onclick="closeOnboardingModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-brand-50 text-brand-muted">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Step Progress Indicator -->
+        <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+          <span class="text-xs font-bold text-brand-500 uppercase tracking-wider" id="ob-step-label">Шаг 1 из 3</span>
+          <div class="flex gap-1.5">
+            <div class="w-6 h-2 rounded-full bg-brand-500" id="ob-bar-1"></div>
+            <div class="w-6 h-2 rounded-full bg-gray-200" id="ob-bar-2"></div>
+            <div class="w-6 h-2 rounded-full bg-gray-200" id="ob-bar-3"></div>
+          </div>
+        </div>
+
+        <!-- ONBOARDING STEP 1 -->
+        <div id="ob-step-1-content" class="space-y-4">
+          <h3 class="text-2xl font-extrabold text-brand-dark" id="ob-title-1">Добро пожаловать в QADAM!</h3>
+          <p class="text-sm text-brand-muted" id="ob-sub-1">Давайте познакомимся, чтобы настроить программу под вас.</p>
+          
+          <div class="space-y-3 pt-2">
+            <div>
+              <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1" id="lbl-ob-name">Ваше имя</label>
+              <input type="text" id="ob-input-name" value="Айгуль Апа" class="w-full bg-brand-beige/40 px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1" id="lbl-ob-age">Возраст</label>
+                <input type="number" id="ob-input-age" value="62" class="w-full bg-brand-beige/40 px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-1" id="lbl-ob-city">Город (опционально)</label>
+                <input type="text" id="ob-input-city" placeholder="Алматы" class="w-full bg-brand-beige/40 px-4 py-3 rounded-2xl border border-brand-500/20 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+              </div>
+            </div>
+          </div>
+
+          <button onclick="nextOnboardingStep(2)" class="w-full mt-4 bg-brand-500 hover:bg-brand-600 text-white font-bold py-3.5 rounded-2xl transition flex items-center justify-center gap-2">
+            <span id="btn-ob-next-1">Далее</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- ONBOARDING STEP 2 -->
+        <div id="ob-step-2-content" class="hidden space-y-4">
+          <h3 class="text-2xl font-extrabold text-brand-dark" id="ob-title-2">Что вам интересно?</h3>
+          <p class="text-sm text-brand-muted" id="ob-sub-2">Выберите темы, которые хотите освоить:</p>
+
+          <div class="flex flex-wrap gap-2 pt-2" id="ob-interests-chips">
+            <!-- Dynamically populated chips -->
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button onclick="nextOnboardingStep(1)" class="w-1/3 bg-brand-beige text-brand-dark font-bold py-3 rounded-2xl transition" id="btn-ob-prev-2">Назад</button>
+            <button onclick="nextOnboardingStep(3)" class="w-2/3 bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 rounded-2xl transition flex items-center justify-center gap-2">
+              <span id="btn-ob-next-2">Далее</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- ONBOARDING STEP 3 -->
+        <div id="ob-step-3-content" class="hidden space-y-4">
+          <h3 class="text-2xl font-extrabold text-brand-dark" id="ob-title-3">Ваши основные цели</h3>
+          <p class="text-sm text-brand-muted" id="ob-sub-3">Чего вы хотите достичь в первую очередь?</p>
+
+          <div class="space-y-2 pt-2" id="ob-goals-list">
+            <!-- Dynamically populated check options -->
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button onclick="nextOnboardingStep(2)" class="w-1/3 bg-brand-beige text-brand-dark font-bold py-3 rounded-2xl transition" id="btn-ob-prev-3">Назад</button>
+            <button onclick="finishOnboarding()" class="w-2/3 bg-brand-yellow hover:bg-brand-yellowhover text-brand-dark font-bold py-3 rounded-2xl transition shadow flex items-center justify-center gap-2">
+              <span id="btn-ob-finish">Создать профиль</span>
+              <i data-lucide="check" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GLOBAL TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       QADAM DATA ENGINE & GLOBAL STATE MANAGEMENT
+       ========================================================================== */
+
+    // Global App State
+    let currentLang = 'ru';
+    let currentTextSize = 'md';
+    let activePage = 'dashboard';
+    let userProgress = 42; // Percentage
+    
+    let userProfile = {
+      name: 'Айгуль Апа',
+      age: 62,
+      city: 'Алматы',
+      interests: ['smartphones', 'ai', 'photography'],
+      goals: ['learn_phone', 'use_ai'],
+      completedCoursesCount: 1,
+      completedLessonsCount: 18,
+      unlockedBadges: ['badge-1', 'badge-2', 'badge-3', 'badge-4']
+    };
+
+    // Localization Dictionary (RU & KZ)
+    const translations = {
+      ru: {
+        tagline: 'Learn. Create. Connect.',
+        courses: 'Курсы',
+        ai_mentor: 'AI Наставник',
+        community: 'Сообщество',
+        marketplace: 'Маркетплейс',
+        passport: 'Паспорт навыков',
+        start_free: 'Начать бесплатно',
+        notifs: 'Уведомления',
+        clear: 'Очистить',
+        home: 'Главная',
+        my_courses: 'Мои курсы & Каталог',
+        my_projects: 'Мои проекты',
+        share_exp: 'Поделиться опытом',
+        settings: 'Настройки',
+        path_progress: 'Прогресс пути',
+        hero_badge: 'Персонализированная EdTech Платформа',
+        hero_title: 'Учитесь. Создавайте. Общайтесь.',
+        hero_subtitle: 'QADAM — это образовательное пространство, где современные технологии превращаются в простые и уверенные ежедневные навыки.',
+        start_14: 'Начать 14 дней бесплатно',
+        explore_courses: 'Исследовать курсы',
+        active_course: 'Текущий курс',
+        continue_lesson: 'Продолжить урок',
+        ask_ai: 'Спросить AI',
+        create_course: 'Создать курс',
+        stat_courses: 'Курсов начато',
+        stat_lessons: 'Уроков пройдено',
+        stat_progress: 'Общий прогресс',
+        stat_badges: 'Достижения',
+        personal_path: 'Ваш персональный путь QADAM',
+        reconfig: 'Настроить заново'
+      },
+      kz: {
+        tagline: 'Уйрен. Жаса. Байланыс.',
+        courses: 'Курстар',
+        ai_mentor: 'AI Тәлімгер',
+        community: 'Қауымдастық',
+        marketplace: 'Маркетплейс',
+        passport: 'Дағдылар паспорты',
+        start_free: 'Тегін бастау',
+        notifs: 'Хабарландырулар',
+        clear: 'Тазалау',
+        home: 'Басты бет',
+        my_courses: 'Курстарым & Каталог',
+        my_projects: 'Жобаларым',
+        share_exp: 'Тәжірибемен бөлісу',
+        settings: 'Баптаулар',
+        path_progress: 'Жол прогресі',
+        hero_badge: 'Жекешелендірілген EdTech Платформасы',
+        hero_title: 'Үйреніңіз. Жасаңыз. Тілдесіңіз.',
+        hero_subtitle: 'QADAM — заманауи технологиялар қарапайым және сенімді күнделікті дағдыларға айналатын білім беру кеңістігі.',
+        start_14: '14 күн тегін бастау',
+        explore_courses: 'Курстарды қарау',
+        active_course: 'Ағымдағы курс',
+        continue_lesson: 'Сабақты жалғастыру',
+        ask_ai: 'AI-дан сұрау',
+        create_course: 'Курс жасау',
+        stat_courses: 'Басталған курстар',
+        stat_lessons: 'Өтілген сабақтар',
+        stat_progress: 'Жалпы прогресс',
+        stat_badges: 'Жетістіктер',
+        personal_path: 'Сіздің жеке QADAM жолыңыз',
+        reconfig: 'Қайта баптау'
+      }
+    };
+
+    // Dynamic Notifications Data
+    let notifications = [
+      { id: 1, title: 'Урок завершен ✓', desc: 'Вы успешно прошли урок "Отправка фото"', time: '10 мин назад' },
+      { id: 2, title: 'Достижение разблокировано 🏆', desc: 'Получен знак "Мастер Смартфона"', time: '1 час назад' },
+      { id: 3, title: 'Новый ответ в клубе 💬', desc: 'В клубе Садоводство новое обсуждение', time: 'Вчера' }
+    ];
+
+    // Master Courses Database (12 Detailed Courses)
+    const coursesData = [
+      {
+        id: 'course-1',
+        title: 'Основы смартфона',
+        titleKz: 'Смартфон негіздері',
+        category: 'digital',
+        lessonsCount: 12,
+        duration: '2 часа',
+        level: 'Начальный',
+        progress: 64,
+        description: 'Управление сенсорным экраном, настройки, приложения и звонки.',
+        theory: 'В этом уроке мы разберем, как отправлять фотографии своим родственникам и друзьям через популярные мессенджеры. Это быстро, бесплатно и абсолютно безопасно.',
+        practiceSteps: [
+          'Откройте приложение мессенджера на вашем смартфоне.',
+          'Выберите нужный чат с родственником или другом.',
+          'Нажмите на иконку «Скрепка» или «Плюс» рядом с строкой ввода текста.',
+          'Выберите нужную фотографию из галереи и нажмите «Отправить».'
+        ]
+      },
+      {
+        id: 'course-2',
+        title: 'Общение в интернете',
+        titleKz: 'Интернеттегі қарым-қатынас',
+        category: 'communication',
+        lessonsCount: 8,
+        duration: '1.5 часа',
+        level: 'Начальный',
+        progress: 25,
+        description: 'Видеозвонки, текстовые и голосовые сообщения родным.',
+        theory: 'Голосовые сообщения позволяют передать эмоции и сэкономить время при наборе текста.',
+        practiceSteps: [
+          'Нажмите и удерживайте иконку микрофона в чате.',
+          'Нажмите проговорите ваше сообщение.',
+          'Отпустите кнопку для отправки.'
+        ]
+      },
+      {
+        id: 'course-3',
+        title: 'Безопасность в сети',
+        titleKz: 'Желілік қауіпсіздік',
+        category: 'safety',
+        lessonsCount: 10,
+        duration: '2 часа',
+        level: 'Начальный',
+        progress: 0,
+        description: 'Как распознать мошенников, защитить пароли и банковские карты.',
+        theory: 'Никогда не сообщайте SMS-коды из банка посторонним людям.',
+        practiceSteps: [
+          'Проверьте, установлена ли блокировка экрана.',
+          'Настройте надежный пароль из 6 цифр.'
+        ]
+      },
+      {
+        id: 'course-4',
+        title: 'Карты и Навигация',
+        titleKz: 'Карталар және Навигация',
+        category: 'life',
+        lessonsCount: 6,
+        duration: '1 час',
+        level: 'Начальный',
+        progress: 50,
+        description: 'Как найти маршрут автобуса, аптеку или поликлинику рядом.',
+        theory: 'Онлайн карты помогают построить пеший или автобусный маршрут в любую точку города.',
+        practiceSteps: [
+          'Откройте приложение карт.',
+          'Векспертной строке введите адрес или название "Аптека".',
+          'Нажмите кнопку "Маршрут".'
+        ]
+      },
+      {
+        id: 'course-5',
+        title: 'Основы Искусственного Интеллекта',
+        titleKz: 'Жасанды Интеллект негіздері',
+        category: 'ai',
+        lessonsCount: 9,
+        duration: '2 часа',
+        level: 'Средний',
+        progress: 10,
+        description: 'Что такое AI и как он может помогать в повседневной жизни.',
+        theory: 'AI — это умный помощник, который ответит на любой вопрос простыми словами.',
+        practiceSteps: [
+          'Сформулируйте простой вопрос для AI.',
+          'Отправьте сообщение и прочитайте ответ.'
+        ]
+      },
+      {
+        id: 'course-6',
+        title: 'ChatGPT на практике',
+        titleKz: 'ChatGPT тәжірибеде',
+        category: 'ai',
+        lessonsCount: 12,
+        duration: '2.5 часа',
+        level: 'Средний',
+        progress: 0,
+        description: 'Составление рецептов, написание поздравлений и поиск советов.',
+        theory: 'ИИ может составлять персонализированные меню на неделю с учетом ваших предпочтений.',
+        practiceSteps: [
+          'Напишите ИИ: "Составь рецепт пирога из яблок".',
+          'Попросите ИИ упростить рецепт.'
+        ]
+      },
+      {
+        id: 'course-7',
+        title: 'Красивые фотографии',
+        titleKz: 'Әдемі фотосуреттер',
+        category: 'creativity',
+        lessonsCount: 8,
+        duration: '1.5 часа',
+        level: 'Начальный',
+        progress: 80,
+        description: 'Секреты хорошего освещения, фокуса и правильного кадра.',
+        theory: 'Протрите камеру телефона перед съемкой — это сделает кадр в 2 раза четче.',
+        practiceSteps: [
+          'Протрите объектив мягкой салфеткой.',
+          'Нажмите на экран в месте, где находится объект для фокусировки.',
+          'Сделайте снимок.'
+        ]
+      },
+      {
+        id: 'course-8',
+        title: 'Дизайн и Открытки',
+        titleKz: 'Дизайн және Ашықхаттар',
+        category: 'creativity',
+        lessonsCount: 7,
+        duration: '1.5 часа',
+        level: 'Средний',
+        progress: 0,
+        description: 'Создание красивых поздравительных открыток для семьи.',
+        theory: 'Красивая открытка с собственным текстом порадует внуков и детей.',
+        practiceSteps: [
+          'Выберите фоновую картинку.',
+          'Добавьте душевный текст поздравления.'
+        ]
+      },
+      {
+        id: 'course-9',
+        title: 'Цифровой Садовод',
+        titleKz: 'Сандық Бағбан',
+        category: 'life',
+        lessonsCount: 6,
+        duration: '1 час',
+        level: 'Начальный',
+        progress: 0,
+        description: 'Определение растений по фото, календари посадки онлайн.',
+        theory: 'Вы можете сфотографировать любой цветок и узнать его название через бота.',
+        practiceSteps: [
+          'Сделайте фото домашнего растения.',
+          'Загрузите фото в приложение распознавания.'
+        ]
+      },
+      {
+        id: 'course-10',
+        title: 'Цифровая Библиотека',
+        titleKz: 'Сандық Кітапхана',
+        category: 'life',
+        lessonsCount: 5,
+        duration: '1 час',
+        level: 'Начальный',
+        progress: 0,
+        description: 'Чтение электронных книг и прослушивание аудиокниг.',
+        theory: 'Аудиокниги позволяют слушать любимые произведения с настроенной громкостью.',
+        practiceSteps: [
+          'Найдите аудиокнигу в каталоге.',
+          'Нажмите кнопку Воспроизвести.'
+        ]
+      },
+      {
+        id: 'course-11',
+        title: 'Госуслуги и Онлайн-платежи',
+        titleKz: 'Мемлекеттік қызметтер және Онлайн төлемдер',
+        category: 'digital',
+        lessonsCount: 10,
+        duration: '2 часа',
+        level: 'Начальный',
+        progress: 30,
+        description: 'Оплата коммунальных услуг, запись к врачу не выходя из дома.',
+        theory: 'Оплата коммунальных услуг по QR-коду занимает всего 10 секунд.',
+        practiceSteps: [
+          'Наведите камеру на QR-код в квитанции.',
+          'Проверьте сумму и подтвердите оплату.'
+        ]
+      },
+      {
+        id: 'course-12',
+        title: 'Обработка Фото и Видео',
+        titleKz: 'Фото мен Видео өңдеу',
+        category: 'creativity',
+        lessonsCount: 8,
+        duration: '2 часа',
+        level: 'Средний',
+        progress: 0,
+        description: 'Создание семейных видеороликов из старых фотографий.',
+        theory: 'Объедините 5 лучших фото года в один красивый слайд-шоу видеоролик.',
+        practiceSteps: [
+          'Выберите 5 фотографий.',
+          'Выберите фоновую спокойную музыку.',
+          'Сохраните готовое видео.'
+        ]
+      }
+    ];
+
+    // Current Lesson State Tracking
+    let activeLessonCourse = null;
+    let activeLessonStep = 0;
+
+    // AI Mentor State
+    let aiStepIndex = 1;
+
+    /* ==========================================================================
+       NAVIGATION & VIEW SWITCHING
+       ========================================================================== */
+
+    function navigateTo(pageId) {
+      activePage = pageId;
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+      const target = document.getElementById(`view-${pageId}`);
+      if (target) target.classList.remove('hidden');
+
+      // Update Header Navigation Active State
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        if (btn.dataset.nav === pageId) {
+          btn.classList.add('bg-white', 'text-brand-dark', 'shadow-sm');
+          btn.classList.remove('text-brand-muted');
+        } else {
+          btn.classList.remove('bg-white', 'text-brand-dark', 'shadow-sm');
+          btn.classList.add('text-brand-muted');
+        }
+      });
+
+      // Update Sidebar Items Active State
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        if (item.dataset.page === pageId) {
+          item.classList.add('bg-brand-50', 'text-brand-dark', 'font-bold');
+          item.classList.remove('text-brand-muted');
+        } else {
+          item.classList.remove('bg-brand-50', 'text-brand-dark', 'font-bold');
+          item.classList.add('text-brand-muted');
+        }
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       ACCESSIBILITY & LOCALIZATION CONTROLS
+       ========================================================================== */
+
+    function setTextSize(size) {
+      currentTextSize = size;
+      const html = document.documentElement;
+      html.classList.remove('text-sm-mode', 'text-md-mode', 'text-lg-mode');
+      html.classList.add(`text-${size}-mode`);
+
+      ['sm', 'md', 'lg'].forEach(s => {
+        const btnHeader = document.getElementById(`ts-${s}`);
+        const btnSet = document.getElementById(`set-ts-${s}`);
+        
+        if (s === size) {
+          if (btnHeader) btnHeader.className = 'px-2 py-1 text-xs font-bold rounded bg-white shadow-sm text-brand-500 transition';
+          if (btnSet) btnSet.className = 'px-4 py-2 text-sm font-bold rounded-xl bg-white text-brand-500 shadow-sm transition';
+        } else {
+          if (btnHeader) btnHeader.className = 'px-2 py-1 text-xs font-bold rounded hover:bg-white transition text-brand-muted';
+          if (btnSet) btnSet.className = 'px-4 py-2 text-sm font-bold rounded-xl hover:bg-white transition text-brand-muted';
+        }
+      });
+    }
+
+    function toggleHighContrast(enabled) {
+      if (enabled) {
+        document.body.classList.add('high-contrast');
+      } else {
+        document.body.classList.remove('high-contrast');
+      }
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      
+      const ruBtn = document.getElementById('lang-ru');
+      const kzBtn = document.getElementById('lang-kz');
+      const setRuBtn = document.getElementById('set-lang-ru');
+      const setKzBtn = document.getElementById('set-lang-kz');
+
+      if (lang === 'ru') {
+        if (ruBtn) ruBtn.className = 'px-2.5 py-1 rounded transition bg-white shadow-sm text-brand-500 font-bold';
+        if (kzBtn) kzBtn.className = 'px-2.5 py-1 rounded transition text-brand-muted';
+        if (setRuBtn) setRuBtn.className = 'px-4 py-2 rounded-lg transition bg-white text-brand-500 font-bold shadow-sm';
+        if (setKzBtn) setKzBtn.className = 'px-4 py-2 rounded-lg transition text-brand-muted';
+      } else {
+        if (kzBtn) kzBtn.className = 'px-2.5 py-1 rounded transition bg-white shadow-sm text-brand-500 font-bold';
+        if (ruBtn) ruBtn.className = 'px-2.5 py-1 rounded transition text-brand-muted';
+        if (setKzBtn) setKzBtn.className = 'px-4 py-2 rounded-lg transition bg-white text-brand-500 font-bold shadow-sm';
+        if (setRuBtn) setRuBtn.className = 'px-4 py-2 rounded-lg transition text-brand-muted';
+      }
+
+      // Localize Core UI Elements
+      const t = translations[lang];
+      document.getElementById('txt-tagline').innerText = t.tagline;
+      document.getElementById('nav-courses').innerText = t.courses;
+      document.getElementById('nav-ai').innerText = t.ai_mentor;
+      document.getElementById('nav-community').innerText = t.community;
+      document.getElementById('nav-marketplace').innerText = t.marketplace;
+      document.getElementById('nav-passport').innerText = t.passport;
+      document.getElementById('lbl-start-free').innerText = t.start_free;
+      document.getElementById('sb-home').innerText = t.home;
+      document.getElementById('sb-courses').innerText = t.my_courses;
+      document.getElementById('sb-ai').innerText = t.ai_mentor;
+      document.getElementById('sb-passport').innerText = t.passport;
+      document.getElementById('sb-projects').innerText = t.my_projects;
+      document.getElementById('sb-community').innerText = t.community;
+      document.getElementById('sb-share').innerText = t.share_exp;
+      document.getElementById('sb-settings').innerText = t.settings;
+
+      document.getElementById('hero-badge').innerText = t.hero_badge;
+      document.getElementById('hero-title').innerText = t.hero_title;
+      document.getElementById('hero-subtitle').innerText = t.hero_subtitle;
+      document.getElementById('hero-btn-start').innerText = t.start_14;
+      document.getElementById('hero-btn-explore').innerText = t.explore_courses;
+
+      renderCourseCatalog();
+      renderPersonalPath();
+      showToast(`Язык переключен на ${lang === 'ru' ? 'Русский' : 'Қазақша'}`);
+    }
+
+    /* ==========================================================================
+       NOTIFICATIONS SYSTEM
+       ========================================================================== */
+
+    function toggleNotifications() {
+      const dropdown = document.getElementById('notif-dropdown');
+      dropdown.classList.toggle('hidden');
+      renderNotifications();
+    }
+
+    function renderNotifications() {
+      const list = document.getElementById('notif-list');
+      if (notifications.length === 0) {
+        list.innerHTML = `<div class="text-xs text-brand-muted text-center py-4">Уведомлений нет</div>`;
+        document.getElementById('notif-badge').classList.add('hidden');
+        return;
+      }
+      list.innerHTML = notifications.map(n => `
+        <div class="p-2.5 bg-brand-50/50 rounded-xl space-y-0.5">
+          <div class="text-xs font-bold text-brand-dark">${n.title}</div>
+          <div class="text-xs text-brand-muted">${n.desc}</div>
+          <div class="text-[10px] text-gray-400 pt-1">${n.time}</div>
+        </div>
+      `).join('');
+    }
+
+    function clearNotifications() {
+      notifications = [];
+      renderNotifications();
+    }
+
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'bg-brand-dark text-white text-xs font-medium px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0';
+      toast.innerHTML = `<i data-lucide="info" class="w-4 h-4 text-brand-yellow"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      
+      if (window.lucide) lucide.createIcons();
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    /* ==========================================================================
+       PERSONAL LEARNING PATH ENGINE
+       ========================================================================== */
+
+    function renderPersonalPath() {
+      const container = document.getElementById('path-steps-container');
+      const steps = [
+        { step: 1, title: 'Основы смартфона', status: 'completed', icon: 'smartphone' },
+        { step: 2, title: 'Общение онлайн', status: 'current', icon: 'message-square' },
+        { step: 3, title: 'Безопасность', status: 'upcoming', icon: 'shield-check' },
+        { step: 4, title: 'Основы AI', status: 'upcoming', icon: 'bot' },
+        { step: 5, title: 'Первый Проект', status: 'upcoming', icon: 'folder-kanban' }
+      ];
+
+      container.innerHTML = steps.map(s => {
+        let bgClass = 'bg-brand-50 border-brand-500/10 text-brand-muted';
+        let badge = `<span class="text-[10px] font-bold text-brand-muted">Шаг ${s.step}</span>`;
+
+        if (s.status === 'completed') {
+          bgClass = 'bg-brand-500/10 border-brand-500/30 text-brand-dark';
+          badge = `<span class="text-[10px] font-bold text-brand-500 flex items-center gap-1">✓ Завершено</span>`;
+        } else if (s.status === 'current') {
+          bgClass = 'bg-brand-yellow/20 border-brand-yellow text-brand-dark ring-2 ring-brand-yellow/50';
+          badge = `<span class="text-[10px] font-bold text-brand-dark">Текущий шаг</span>`;
+        }
+
+        return `
+          <div class="p-3.5 rounded-2xl border ${bgClass} space-y-2 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between">
+                ${badge}
+                <i data-lucide="${s.icon}" class="w-4 h-4"></i>
+              </div>
+              <div class="font-bold text-sm mt-1">${s.title}</div>
+            </div>
+            ${s.status === 'current' ? `
+              <button onclick="openCourseViewer('course-2')" class="w-full bg-brand-500 text-white font-bold text-[11px] py-1.5 rounded-xl transition">
+                Продолжить
+              </button>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ==========================================================================
+       COURSE CATALOG & LESSON VIEWER
+       ========================================================================== */
+
+    function renderCourseCatalog(filtered = coursesData) {
+      const grid = document.getElementById('courses-grid');
+      grid.innerHTML = filtered.map(c => `
+        <div class="bg-white rounded-3xl p-5 soft-shadow border border-brand-500/10 flex flex-col justify-between space-y-4 hover:shadow-lg transition">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 bg-brand-50 text-brand-500 rounded-full text-[11px] font-bold">
+                ${c.level}
+              </span>
+              <span class="text-xs text-brand-muted flex items-center gap-1">
+                <i data-lucide="clock" class="w-3.5 h-3.5"></i> ${c.duration}
+              </span>
+            </div>
+            <h3 class="text-lg font-bold text-brand-dark leading-snug">${currentLang === 'ru' ? c.title : c.titleKz}</h3>
+            <p class="text-xs text-brand-muted line-clamp-2 leading-relaxed">${c.description}</p>
+          </div>
+
+          <div class="space-y-3 pt-2 border-t border-gray-100">
+            <div class="flex justify-between items-center text-xs font-semibold">
+              <span class="text-brand-muted">${c.lessonsCount} уроков</span>
+              <span class="text-brand-500">${c.progress}%</span>
+            </div>
+            <div class="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div class="bg-brand-500 h-full rounded-full transition-all duration-300" style="width: ${c.progress}%"></div>
+            </div>
+            <button onclick="openCourseViewer('${c.id}')" class="w-full bg-brand-50 hover:bg-brand-500 text-brand-500 hover:text-white font-bold text-xs py-2.5 rounded-xl transition">
+              ${c.progress > 0 ? 'Продолжить обучение' : 'Начать курс'}
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function filterCategory(cat) {
+      document.querySelectorAll('.cat-chip').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.className = 'cat-chip bg-brand-500 text-white px-4 py-2 rounded-full text-xs font-bold shrink-0 transition';
+        } else {
+          btn.className = 'cat-chip bg-white text-brand-dark border border-brand-500/10 px-4 py-2 rounded-full text-xs font-bold shrink-0 hover:bg-brand-50 transition';
+        }
+      });
+
+      if (cat === 'all') {
+        renderCourseCatalog(coursesData);
+      } else {
+        const filtered = coursesData.filter(c => c.category === cat);
+        renderCourseCatalog(filtered);
+      }
+    }
+
+    function filterCourses() {
+      const query = document.getElementById('course-search-input').value.toLowerCase();
+      const filtered = coursesData.filter(c => c.title.toLowerCase().includes(query) || c.description.toLowerCase().includes(query));
+      renderCourseCatalog(filtered);
+    }
+
+    function openCourseViewer(courseId) {
+      const course = coursesData.find(c => c.id === courseId) || coursesData[0];
+      activeLessonCourse = course;
+      activeLessonStep = 0;
+
+      document.getElementById('lp-course-title').innerText = currentLang === 'ru' ? course.title : course.titleKz;
+      document.getElementById('lp-title').innerText = currentLang === 'ru' ? course.title : course.titleKz;
+      document.getElementById('lp-theory-text').innerText = course.theory;
+
+      // Render Mandatory Practice Steps
+      const stepsContainer = document.getElementById('lp-practice-steps');
+      stepsContainer.innerHTML = course.practiceSteps.map((step, idx) => `
+        <label class="flex items-start gap-3 p-3 bg-brand-beige/40 rounded-xl border border-brand-500/10 cursor-pointer hover:bg-white transition">
+          <input type="checkbox" onchange="checkPracticeStep(${idx})" class="mt-1 rounded text-brand-500 focus:ring-brand-500 w-4 h-4">
+          <span class="text-sm font-medium text-brand-dark">${idx + 1}. ${step}</span>
+        </label>
+      `).join('');
+
+      document.getElementById('lesson-player-modal').classList.remove('hidden');
+    }
+
+    function closeLessonPlayer() {
+      document.getElementById('lesson-player-modal').classList.add('hidden');
+    }
+
+    function checkPracticeStep(idx) {
+      activeLessonStep++;
+      document.getElementById('lp-step-counter').innerText = `Выполнено ${activeLessonStep} из ${activeLessonCourse.practiceSteps.length}`;
+    }
+
+    function completeCurrentLessonPractice() {
+      if (activeLessonCourse) {
+        activeLessonCourse.progress = Math.min(100, activeLessonCourse.progress + 25);
+        userProfile.completedLessonsCount++;
+        renderCourseCatalog();
+      }
+      closeLessonPlayer();
+      showToast('Практика успешно выполнена! Прогресс обновлен ✓');
+
+      // Add Notification
+      notifications.unshift({
+        id: Date.now(),
+        title: 'Урок завершен ✓',
+        desc: `Вы прошли практику курса "${activeLessonCourse.title}"`,
+        time: 'Только что'
+      });
+      document.getElementById('notif-badge').classList.remove('hidden');
+    }
+
+    function askAIMentorForCurrentLesson() {
+      closeLessonPlayer();
+      navigateTo('ai-mentor');
+      sendAIMessage(`Как мне правильно выполнить практику в курсе "${activeLessonCourse.title}"?`);
+    }
+
+    /* ==========================================================================
+       AI MENTOR CHAT ENGINE
+       ========================================================================== */
+
+    function sendAIMessage(text) {
+      const messagesContainer = document.getElementById('ai-chat-messages');
+      
+      // User Message Bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = 'flex justify-end';
+      userBubble.innerHTML = `
+        <div class="bg-brand-500 text-white p-3.5 rounded-2xl rounded-tr-none text-sm max-w-md shadow-sm">
+          ${text}
+        </div>
+      `;
+      messagesContainer.appendChild(userBubble);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      // Simulated AI One-Step-At-A-Time Response
+      setTimeout(() => {
+        const aiBubble = document.createElement('div');
+        aiBubble.className = 'flex items-start gap-3';
+        aiBubble.innerHTML = `
+          <div class="w-8 h-8 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-xs">
+            AI
+          </div>
+          <div class="bg-white p-4 rounded-2xl rounded-tl-none border border-brand-500/10 text-sm max-w-md soft-shadow space-y-3">
+            <div class="font-bold text-brand-dark">Шаг ${aiStepIndex}:</div>
+            <p class="text-brand-muted">Возьмите ваш телефон в руку и найдите иконку приложения сообщений зеленого или синего цвета.</p>
+            <div class="pt-2 flex items-center gap-2">
+              <button onclick="aiConfirmStepDone()" class="bg-brand-yellow hover:bg-brand-yellowhover text-brand-dark font-bold text-xs px-3.5 py-1.5 rounded-xl transition">
+                Готово, следующий шаг →
+              </button>
+            </div>
+          </div>
+        `;
+        messagesContainer.appendChild(aiBubble);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        aiStepIndex++;
+      }, 600);
+    }
+
+    function triggerUserAISend() {
+      const input = document.getElementById('ai-user-input');
+      const val = input.value.trim();
+      if (val) {
+        sendAIMessage(val);
+        input.value = '';
+      }
+    }
+
+    function aiConfirmStepDone() {
+      sendAIMessage('Выполнено. Что делать дальше?');
+    }
+
+    function handleAIQuickAction(type) {
+      if (type === 'simpler') sendAIMessage('Объясни, пожалуйста, еще проще, без сложных слов.');
+      if (type === 'repeat') sendAIMessage('Повтори предыдущий шаг подробнее.');
+      if (type === 'example') sendAIMessage('Покажи наглядный пример.');
+    }
+
+    function simulateVoiceMode() {
+      showToast('🎙 Голосовой режим включен. Говорите...');
+    }
+
+    function resetAIChat() {
+      aiStepIndex = 1;
+      const messagesContainer = document.getElementById('ai-chat-messages');
+      messagesContainer.innerHTML = `
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-brand-500 text-white font-bold flex items-center justify-center shrink-0 text-xs">AI</div>
+          <div class="bg-white p-4 rounded-2xl border border-brand-500/10 text-sm max-w-md soft-shadow">
+            Здравствуйте! Я ваш персональный AI Наставник QADAM. Чем я могу помочь вам прямо сейчас?
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       DIGITAL PASSPORT & ACHIEVEMENTS ENGINE
+       ========================================================================== */
+
+    function renderPassport() {
+      const skillsContainer = document.getElementById('verified-skills-list');
+      const skills = [
+        { name: 'Смартфон', icon: 'smartphone', active: true },
+        { name: 'Интернет', icon: 'globe', active: true },
+        { name: 'Искусственный Интеллект', icon: 'bot', active: true },
+        { name: 'Безопасность', icon: 'shield-check', active: true },
+        { name: 'Фотография', icon: 'camera', active: true }
+      ];
+
+      skillsContainer.innerHTML = skills.map(s => `
+        <div class="p-3 bg-brand-50/80 rounded-2xl border border-brand-500/20 flex items-center gap-2.5">
+          <i data-lucide="check-circle-2" class="w-5 h-5 text-brand-500 shrink-0"></i>
+          <span class="text-xs font-bold text-brand-dark">${s.name}</span>
+        </div>
+      `).join('');
+
+      const badgesContainer = document.getElementById('badges-container');
+      const badges = [
+        { id: 'badge-1', title: '🏆 Первый Шаг', desc: 'Успешно завершен первый урок в QADAM' },
+        { id: 'badge-2', title: '📱 Мастер Смартфона', desc: 'Освоены все базовые настройки устройства' },
+        { id: 'badge-3', title: '🤖 ИИ Исследователь', desc: 'Задано более 10 вопросов AI Наставнику' },
+        { id: 'badge-4', title: '🛡 Эксперт Безопасности', desc: 'Изучены правила защиты от мошенников' },
+        { id: 'badge-5', title: '🎨 Автор & Творец', desc: 'Создан первый цифровой проект' }
+      ];
+
+      badgesContainer.innerHTML = badges.map(b => `
+        <div class="p-4 bg-brand-beige/50 rounded-2xl border border-brand-500/10 flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-yellow/30 flex items-center justify-center text-lg shrink-0">
+            🥇
+          </div>
+          <div>
+            <div class="text-sm font-bold text-brand-dark">${b.title}</div>
+            <div class="text-xs text-brand-muted mt-0.5">${b.desc}</div>
+          </div>
+        </div>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    /* ==========================================================================
+       DIGITAL PROJECTS STUDIO ENGINE
+       ========================================================================== */
+
+    const userProjects = [
+      { id: 1, title: 'Поздравительная открытка внуку', date: '12 Сен 2026', type: 'Открытка' },
+      { id: 2, title: 'Семейный альбом "Лето 2026"', date: '01 Сен 2026', type: 'Фотоальбом' }
+    ];
+
+    function renderProjects() {
+      const grid = document.getElementById('projects-grid');
+      grid.innerHTML = userProjects.map(p => `
+        <div class="bg-white p-5 rounded-3xl soft-shadow border border-brand-500/10 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="px-2.5 py-1 bg-brand-50 text-brand-500 rounded-full text-[10px] font-bold uppercase tracking-wider">${p.type}</span>
+            <span class="text-[10px] text-brand-muted">${p.date}</span>
+          </div>
+          <h4 class="font-bold text-base text-brand-dark">${p.title}</h4>
+          <div class="flex gap-2 pt-2">
+            <button onclick="showToast('Открытие проекта...')" class="flex-1 bg-brand-50 text-brand-500 font-bold text-xs py-2 rounded-xl">Просмотр</button>
+            <button onclick="showToast('Ссылка скопирована!')" class="p-2 text-brand-muted hover:bg-brand-50 rounded-xl">
+              <i data-lucide="share-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function createNewProject() {
+      const title = prompt('Введите название нового проекта:', 'Мой цифровой альбом');
+      if (title) {
+        userProjects.unshift({ id: Date.now(), title, date: 'Сегодня', type: 'Проект' });
+        renderProjects();
+        showToast('Проект успешно создан ✓');
+      }
+    }
+
+    /* ==========================================================================
+       SHARE EXPERIENCE & AI COURSE GENERATOR
+       ========================================================================== */
+
+    function generateAICourseStructure() {
+      const topic = document.getElementById('exp-input-topic').value || '30 лет опыта в бухгалтерии';
+      const resultArea = document.getElementById('generated-course-result');
+      const list = document.getElementById('generated-lessons-list');
+
+      list.innerHTML = `
+        <div class="space-y-2">
+          <div class="text-xs font-bold uppercase tracking-wider text-brand-500">Предлагаемая AI структура курса по теме: "${topic}"</div>
+          <div class="p-3 bg-white rounded-xl border border-brand-500/10 text-xs font-semibold text-brand-dark">Урок 1: Введение и базовые термины для новичков</div>
+          <div class="p-3 bg-white rounded-xl border border-brand-500/10 text-xs font-semibold text-brand-dark">Урок 2: 5 главных ошибок, которых стоит избегать</div>
+          <div class="p-3 bg-white rounded-xl border border-brand-500/10 text-xs font-semibold text-brand-dark">Урок 3: Практическое пошаговое руководство</div>
+        </div>
+      `;
+
+      resultArea.classList.remove('hidden');
+      showToast('Структура курса сгенерирована AI!');
+    }
+
+    function submitCourseForModeration() {
+      showToast('Курс отправлен на модерацию (Under Review) ✓');
+      document.getElementById('mod-status').innerText = 'Отправлено на проверку';
+    }
+
+    /* ==========================================================================
+       COMMUNITY CLUBS & DISCUSSIONS
+       ========================================================================== */
+
+    const clubsData = [
+      { id: 'club-1', name: '📷 Фотография', members: 142 },
+      { id: 'club-2', name: '🌱 Садоводство', members: 230 },
+      { id: 'club-3', name: '🎨 Творчество', members: 98 },
+      { id: 'club-4', name: '✈️ Путешествия', members: 185 }
+    ];
+
+    const communityPosts = [
+      { author: 'Мария Петровна', text: 'Попробуйте сегодня сфотографировать цветы у дома под углом 45 градусов — свет получается чудесный!', time: '2 часа назад' },
+      { author: 'Ерлан Аға', text: 'Завершил курс по ИИ! Теперь прошу нейросеть писать кулинарные рецепты.', time: 'Вчера' }
+    ];
+
+    function renderCommunity() {
+      const clubsList = document.getElementById('clubs-list');
+      clubsList.innerHTML = clubsData.map(c => `
+        <div class="p-4 bg-white rounded-2xl border border-brand-500/10 soft-shadow flex flex-col justify-between space-y-2">
+          <div class="font-bold text-sm text-brand-dark">${c.name}</div>
+          <div class="text-xs text-brand-muted">${c.members} участников</div>
+          <button onclick="showToast('Вы вступили в клуб!')" class="w-full bg-brand-50 text-brand-500 font-bold text-xs py-1.5 rounded-xl hover:bg-brand-500 hover:text-white transition">
+            Вступить
+          </button>
+        </div>
+      `).join('');
+
+      const feed = document.getElementById('community-posts-feed');
+      feed.innerHTML = communityPosts.map(p => `
+        <div class="p-4 bg-brand-beige/30 rounded-2xl border border-brand-500/10 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-xs text-brand-dark">${p.author}</span>
+            <span class="text-[10px] text-brand-muted">${p.time}</span>
+          </div>
+          <p class="text-xs text-brand-muted leading-relaxed">${p.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function publishCommunityPost() {
+      const textInput = document.getElementById('community-post-text');
+      const text = textInput.value.trim();
+      if (text) {
+        communityPosts.unshift({ author: userProfile.name, text, time: 'Только что' });
+        textInput.value = '';
+        renderCommunity();
+        showToast('Запись опубликована в сообществе!');
+      }
+    }
+
+    /* ==========================================================================
+       ONBOARDING WIZARD MODAL FLOW
+       ========================================================================== */
+
+    function openOnboardingModal() {
+      document.getElementById('onboarding-modal').classList.remove('hidden');
+      nextOnboardingStep(1);
+    }
+
+    function closeOnboardingModal() {
+      document.getElementById('onboarding-modal').classList.add('hidden');
+    }
+
+    function nextOnboardingStep(step) {
+      document.getElementById('ob-step-1-content').classList.add('hidden');
+      document.getElementById('ob-step-2-content').classList.add('hidden');
+      document.getElementById('ob-step-3-content').classList.add('hidden');
+
+      document.getElementById(`ob-step-${step}-content`).classList.remove('hidden');
+      document.getElementById('ob-step-label').innerText = `Шаг ${step} из 3`;
+
+      [1, 2, 3].forEach(s => {
+        const bar = document.getElementById(`ob-bar-${s}`);
+        if (s <= step) {
+          bar.className = 'w-6 h-2 rounded-full bg-brand-500';
+        } else {
+          bar.className = 'w-6 h-2 rounded-full bg-gray-200';
+        }
+      });
+
+      if (step === 2) {
+        renderInterestsChips();
+      } else if (step === 3) {
+        renderGoalsList();
+      }
+    }
+
+    function renderInterestsChips() {
+      const interests = [
+        { id: 'phone', label: '📱 Смартфоны' },
+        { id: 'ai', label: '🤖 Искусственный Интеллект' },
+        { id: 'photo', label: '📷 Фотография' },
+        { id: 'video', label: '🎥 Видео' },
+        { id: 'art', label: '🎨 Творчество' },
+        { id: 'garden', label: '🌱 Садоводство' },
+        { id: 'books', label: '📚 Книги' },
+        { id: 'travel', label: '✈️ Путешествия' },
+        { id: 'safety', label: '🛡 Безопасность' }
+      ];
+
+      const container = document.getElementById('ob-interests-chips');
+      container.innerHTML = interests.map(i => `
+        <label class="px-3.5 py-2 bg-brand-beige rounded-full border border-brand-500/10 text-xs font-semibold cursor-pointer hover:bg-brand-50 flex items-center gap-1.5 transition">
+          <input type="checkbox" checked class="rounded text-brand-500 focus:ring-brand-500">
+          <span>${i.label}</span>
+        </label>
+      `).join('');
+    }
+
+    function renderGoalsList() {
+      const goals = [
+        'Освоить смартфон и приложения',
+        'Научиться пользоваться ИИ помощником',
+        'Общаться с близкими по видеосвязи',
+        'Создавать цифровые открытки и альбомы',
+        'Делиться своим опытом с другими'
+      ];
+
+      const container = document.getElementById('ob-goals-list');
+      container.innerHTML = goals.map(g => `
+        <label class="flex items-center gap-3 p-3 bg-brand-beige/50 rounded-2xl border border-brand-500/10 cursor-pointer hover:bg-white transition">
+          <input type="checkbox" checked class="rounded text-brand-500 focus:ring-brand-500 w-4 h-4">
+          <span class="text-xs font-semibold text-brand-dark">${g}</span>
+        </label>
+      `).join('');
+    }
+
+    function finishOnboarding() {
+      const name = document.getElementById('ob-input-name').value || 'Пользователь';
+      userProfile.name = name;
+      document.getElementById('user-display-name').innerText = name;
+      document.getElementById('passport-user-name').innerText = name;
+
+      closeOnboardingModal();
+      showToast('Персональный путь QADAM сформирован! Добро пожаловать.');
+      navigateTo('dashboard');
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    /* ==========================================================================
+       APPLICATION INITIALIZATION
+       ========================================================================== */
+
+    window.onload = function() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      // Initialize default views & components
+      renderCourseCatalog();
+      renderPersonalPath();
+      renderPassport();
+      renderProjects();
+      renderCommunity();
+      resetAIChat();
+      renderNotifications();
+
+      // Check Marketplace Unlock Condition
+      if (userProgress >= 30) {
+        document.getElementById('mp-lock-screen').classList.add('hidden');
+        document.getElementById('mp-content').classList.remove('hidden');
+        document.getElementById('marketplace-lock-icon').classList.add('hidden');
+        document.getElementById('sb-lock-mp').classList.add('hidden');
+      }
+    };
+  </script>
+</body>
+</html>
